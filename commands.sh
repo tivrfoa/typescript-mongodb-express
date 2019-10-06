@@ -12,7 +12,7 @@ yarn add -D @types/node
 ##
 ts-node src/index.ts
 
-## tsc compiles ts to js
+## tsc transpile ts to js
 yarn build
 
 
