@@ -23,3 +23,7 @@ yarn add -D ts-node-dev
 yarn add cors body-parser
 
 yarn add -D @types/cors
+
+## MongoDB
+yarn add mongodb
+yarn add -D @types/mongodb
