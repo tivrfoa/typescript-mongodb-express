@@ -27,3 +27,7 @@ yarn add -D @types/cors
 ## MongoDB
 yarn add mongodb
 yarn add -D @types/mongodb
+
+## Swagger
+yarn add swagger-ui-express
+yarn add -D @types/swagger-ui-express
