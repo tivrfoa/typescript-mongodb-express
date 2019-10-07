@@ -31,3 +31,7 @@ yarn add -D @types/mongodb
 ## Swagger
 yarn add swagger-ui-express
 yarn add -D @types/swagger-ui-express
+
+## Mongoose
+yarn add mongoose
+yarn add -D @types/mongoose

@@ -1,77 +1,50 @@
 import express from 'express';
-import mongodb from 'mongodb';
-import { MongoHelper } from './mongo.helper';
+import TodoModel from './model/todo';
 
 const todoRouter = express.Router();
 
-const getCollection = () => {
-    return MongoHelper.client.db('todo').collection('teste01');
-}
+todoRouter.get('/todo', async (req, resp) => {    
 
-todoRouter.get('/todo', (req, resp) => {    
-
-    const collection = getCollection();
-    collection.find({}).toArray((err, items) => {
-        if (err) {
-            resp.status(500);
-            resp.end();
-            console.error('Caught error', err);
-        } else {
-            resp.json(items);
-        }
-    });
+    try {
+        const items = await TodoModel.find();
+        resp.json(items);
+    } catch(err) {
+        resp.status(500);
+        resp.end();
+        console.error('Caught error', err);
+    }
 });
 
-/**
- * When testing on browser, remove Content-Length
- *   so it creates automatically.
- * Content-Type: application/json
- * {"description": "db.teste01.find()"}
- * {"mongo":"anything","goes":"ok?"}
- */
-todoRouter.post('/todo', (req, resp) => {
-    console.log(req.body);
-    let obj: any = {};
-    for (let key in req.body) {
-        const value = req.body[key];
-        console.log(key + " => " + value);
-        obj[key] = value;
-    }
-    const collection = getCollection();
-    collection.insertOne(obj, (err, res) => {
-        if (err) throw err;
-        console.log("1 documented inserted");
-    }); 
+todoRouter.post('/todo', async (req, resp) => {
+    const description = req.body['description'];
+    const item = new TodoModel({
+        description
+    });
+    try {
+        const doc = await item.save();
+        console.log(`${doc} inserted.`);
+    } catch(err) {
+        throw err;        
+    }; 
 
     resp.end();
 });
 
-todoRouter.put('/todo/:id', (req, resp) => {
+todoRouter.put('/todo/:id', async (req, resp) => {
     const description = req.body['description'];
-    console.log('description', description);
-    const collection = getCollection();
     const id = req.params['id'];
-
-    collection.findOneAndUpdate(
-        {
-            "_id": new mongodb.ObjectId(id)
-        },
-        {
-            $set: {description: description}
+    await TodoModel.findByIdAndUpdate(id, {
+            description
         }
     );
 
     resp.end();
 });
 
-todoRouter.delete('/todo/:id', (req, resp) => {
+todoRouter.delete('/todo/:id', async (req, resp) => {
     console.info('deleting: ', req.params.id);
-    const collection = getCollection();
     const id = req.params['id'];
-
-    collection.deleteOne({
-        "_id": new mongodb.ObjectId(id)
-    });
+    const item = await TodoModel.findByIdAndDelete(id);
 
     resp.end();
 });
